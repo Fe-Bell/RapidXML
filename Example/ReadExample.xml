@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RootElement Attribute="12345">
+	<FloatElement>0.5</FloatElement>
+	<ElementArray>
+		<Element>ABC</Element>
+		<Element>DEF</Element>
+		<Element>GHI</Element>
+	</ElementArray>
+</RootElement>

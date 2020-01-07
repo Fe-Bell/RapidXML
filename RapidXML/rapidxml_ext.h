@@ -1,15 +1,7 @@
 /***********************************************************************
-* Project           : Game
-* Author            : Felipe Bellini
-* Date created      : Oct. 12 - 2019
-* Licensed under:	: MIT
-
-************************************************************************/
-
-/***********************************************************************
 * Project           : XML_IO @ rapidxml_ext.h
 * Program name      : XML_IO.exe
-* Author            : Felipe Bellini
+* Author            : Angel Lee
 * Date created      : Sep. 27 - 2019
 * Purpose           : Solves some RapidXml issues with newer versions of GCC:
 					  https://stackoverflow.com/questions/14113923/rapidxml-print-header-has-undefined-methods
@@ -18,8 +10,10 @@
 #define RAPIDXML_EXT_H_
 #include "rapidxml.hpp"
 /* Adding declarations to make it compatible with gcc 4.7 and greater */
-namespace rapidxml {
-	namespace internal {
+namespace rapidxml 
+{
+	namespace internal 
+	{
 		template <class OutIt, class Ch>
 		inline OutIt print_children(OutIt out, const xml_node<Ch>* node, int flags, int indent);
 
