@@ -3,3 +3,6 @@
 ################################################################################
 
 /.vs
+/bin
+/RapidXML/RapidXML.vcxproj.user
+/RapidXML/RapidXML.vcxproj.filters
