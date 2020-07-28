@@ -1,14 +1,12 @@
-/***********************************************************************
-* Project           : XML_IO @ rapidxml_ext.h
-* Program name      : XML_IO.exe
-* Author            : Angel Lee
-* Date created      : Sep. 27 - 2019
-* Purpose           : Solves some RapidXml issues with newer versions of GCC:
-					  https://stackoverflow.com/questions/14113923/rapidxml-print-header-has-undefined-methods
-************************************************************************/
 #ifndef RAPIDXML_EXT_H_
 #define RAPIDXML_EXT_H_
 #include "rapidxml.hpp"
+
+// Copyright (C) 2019 Angel Lee, Felipe Bellini
+// Version 1.14
+// Revision $DateTime: 2019/03/29 12:57:00 $
+//! \file rapidxml_ext.hpp Solves some RapidXml issues with newer versions of GCC: https://stackoverflow.com/questions/14113923/rapidxml-print-header-has-undefined-methods
+
 /* Adding declarations to make it compatible with gcc 4.7 and greater */
 namespace rapidxml 
 {

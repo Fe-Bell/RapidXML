@@ -1,10 +1,10 @@
+#include "rapidxml_factory.hpp"
+#include <filesystem> //C++17's file/directory management library
+
 // Copyright (C) 2020 Felipe Bellini
 // Version 1.14
 // Revision $DateTime: 2020/07/23 12:57:00 $
 //! \file rapidxml_factory.hpp This file contains a safe C++ factory for rapid xml file.
-
-#include "rapidxml_factory.hpp"
-#include <filesystem> //C++17's file/directory management library
 
 /// <summary>
 /// Safe rapidxml::file loader.
