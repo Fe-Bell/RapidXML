@@ -1,7 +1,7 @@
 #include <iostream>
 #include "../RapidXML/rapidxml.hpp"
 #include "../RapidXML/rapidxml_utils.hpp"
-#include "../RapidXML/rapidxml_ext.h"
+#include "../RapidXML/rapidxml_ext.hpp"
 
 void ReadXML();
 void WriteXML();

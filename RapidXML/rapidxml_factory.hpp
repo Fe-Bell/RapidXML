@@ -3,7 +3,7 @@
 
 #include "../RapidXML/rapidxml.hpp"
 #include "../RapidXML/rapidxml_utils.hpp"
-#include "../RapidXML/rapidxml_ext.h"
+#include "../RapidXML/rapidxml_ext.hpp"
 
 // Copyright (C) 2020 Felipe Bellini
 // Version 1.14
