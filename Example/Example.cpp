@@ -2,6 +2,7 @@
 #include "../RapidXML/rapidxml.hpp"
 #include "../RapidXML/rapidxml_utils.hpp"
 #include "../RapidXML/rapidxml_ext.hpp"
+#include "../RapidXML/RapidXMLC.hpp"
 
 void ReadXML();
 void WriteXML();
@@ -10,13 +11,15 @@ int main()
 {
     std::cout << "Hello Example!\n";
 
-    int ret = getchar();
+    //int ret = getchar();
 
-    ReadXML();
+    //ReadXML();
 
-    ret = getchar();
+    //ret = getchar();
 
     WriteXML();
+
+	int ret = getchar();
 }
 
 void ReadXML()
@@ -89,5 +92,34 @@ void ReadXML()
 
 void WriteXML()
 {
+	auto doc = ::CreateXML(1, "utf-8");
 
+	auto root = ::CreateNode(doc, "ROOT", "");
+	if (!::AddNodeToDocument(doc, root))
+	{
+		std::cout << "Could not add root" << std::endl;
+		::FreeXML(doc);
+		return;
+	}
+
+	if (!SetNodeDefaultNamespaces(doc, root))
+	{
+		std::cout << "Could not set namespaces" << std::endl;
+		::FreeXML(doc);
+		return;
+	}
+
+	for (size_t i = 0; i < 5; i++)
+	{
+		auto x = ::CreateNode(doc, "Node", "");
+		auto a = ::CreateAttribute(doc, "ID", std::to_string(i));		
+		::AddAttributeToNode(x, a);
+		::AddNodeToNode(root, x);
+	}	
+
+	if (!::SaveXML(*doc, "test.xml"))
+	{
+		std::cout << "Could not create file" << std::endl;
+	}
+	::FreeXML(doc);
 }
