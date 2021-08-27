@@ -1,6 +1,21 @@
 #include "RapidXMLSTD.hpp"
 
 /**Creates a new XML file
+* @param filePath - Reads a xml file
+* @returns A xml document*/
+XMLDocument* CreateXMLFromFile(const std::string& filePath)
+{
+	if (filePath.empty())
+		return nullptr;
+
+	XMLFile xmlFile(filePath.c_str());
+
+	XMLDocument* doc = new XMLDocument();;
+	doc->parse<0>(xmlFile.data());
+
+	return doc;
+}
+/**Creates a new XML file
 * @param version - the version of the XML format
 * @param encoding - The Encoding of the XML file (eg: utf-8, utf-16)
 * @returns A xml document*/
@@ -141,6 +156,24 @@ XMLElement* CreateNodeA(XMLDocument* doc, const std::string& nodeName, XMLElemen
 	}
 	
 	return n;
+}
+/**Creates a node
+* @param doc - A xml document object
+* @param nodeName - The name of the node
+* @returns True if success*/
+XMLElement* FindNodeInRoot(XMLDocument* doc, const std::string& nodeName)
+{
+	if (!doc || nodeName.empty())
+		return nullptr;
+
+	for (XMLElement* x = doc->first_node(); x; x = x->next_sibling())
+	{
+		if (x && std::string(x->name()) == nodeName)
+		{
+			return x;
+		}
+	}
+	return nullptr;
 }
 /**Adds a node to a xml document
 * @param doc - A xml document object

@@ -13,9 +13,14 @@
 typedef rapidxml::xml_document<> XMLDocument;
 typedef rapidxml::xml_node<> XMLElement;
 typedef rapidxml::xml_attribute<> XMLAttributte;
+typedef rapidxml::file<> XMLFile;
 
 extern "C"
 {
+	/**Creates a new XML file
+	* @param filePath - Reads a xml file
+	* @returns A xml document*/
+	__declspec(dllexport) XMLDocument* CreateXMLFromFile(const std::string& filePath);
 	/**Creates a new XML file
 	* @param version - the version of the XML format
 	* @param encoding - The Encoding of the XML file (eg: utf-8, utf-16)
@@ -82,6 +87,11 @@ extern "C"
 	* @param subNodesCount - The number of nodes to add
 	* @returns True if success*/
 	__declspec(dllexport) XMLElement* CreateNodeA(XMLDocument* doc, const std::string& nodeName, XMLElement** subNodes, const size_t& subNodesCount);
+	/**Creates a node
+	* @param doc - A xml document object
+	* @param nodeName - The name of the node
+	* @returns True if success*/
+	__declspec(dllexport) XMLElement* FindNodeInRoot(XMLDocument* doc, const std::string& nodeName);
 };
 
 #endif

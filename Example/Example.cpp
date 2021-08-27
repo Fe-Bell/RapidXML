@@ -11,12 +11,7 @@ int main()
 {
     std::cout << "Hello Example!\n";
 
-    //int ret = getchar();
-
-    //ReadXML();
-
-    //ret = getchar();
-
+    ReadXML();
     WriteXML();
 
 	int ret = getchar();
@@ -25,69 +20,56 @@ int main()
 void ReadXML()
 {
 	//load file
-	rapidxml::file<> xmlFile("ReadExample.xml");
-	rapidxml::xml_document<>* xml = new rapidxml::xml_document<>();
-	if (xml)
+	XMLDocument* xml = ::CreateXMLFromFile("ReadExample.xml");
+	if (!xml)
 	{
-		char* xmlData = xmlFile.data();
-		if (xmlData)
-		{
-			xml->parse<0>(xmlData);
+		std::cout << "XML object not created" << std::endl;
+		return;
+	}
 
-			//find root
-			rapidxml::xml_node<>* root = xml->first_node();
-			if (root)
-			{
-				//Reading an attribute
-				auto xml_RootAttrib = root->first_attribute("Attribute");
-				if (xml_RootAttrib)
-				{
-					char* valueAsStr = xml_RootAttrib->value();
-					int valueAsNumber = atoi(valueAsStr);
-				}
-				else
-				{
-					printf("Could not find attribute in root.\n");
-				}
+	//find root
+	XMLElement* root = ::FindNodeInRoot(xml, "RootElement");
+	if (!root)
+	{
+		std::cout << "Could not find root." << std::endl;
+		::FreeXML(xml);
+		return;
+	}
 
-				//Reading an array of elements
-				rapidxml::xml_node<char>* xml_ElmentArray = root->first_node("ElementArray");
-				if (xml_ElmentArray)
-				{
-					//Loops through all the elements with the name "Element"
-					for (rapidxml::xml_node<>* xml_Element = xml_ElmentArray->first_node("Element"); xml_Element; xml_Element = xml_Element->next_sibling())
-					{ 
-						if (xml_Element)
-						{
-							char* valueAsStr = xml_Element->value();
-						}
-						else
-						{
-							printf("Element is not valid.\n");
-						}
-					}
-				}
-				else
-				{
-					printf("Could not find ElmentArray xml element.\n");
-				}
-			}
-			else
-			{
-				printf("Could not find root.\n");
-			}
-		}
-		else
+	//Reading an attribute
+	auto xml_RootAttrib = root->first_attribute("Attribute");
+	if (!xml_RootAttrib)
+	{
+		std::cout << "Could not find attribute in root." << std::endl;
+		::FreeXML(xml);
+		return;
+	}
+
+	char* valueAsStr = xml_RootAttrib->value();
+	int valueAsNumber = atoi(valueAsStr);
+
+	//Reading an array of elements
+	XMLElement* xml_ElmentArray = root->first_node("ElementArray");
+	if (!xml_ElmentArray)
+	{
+		std::cout << "Could not find ElmentArray xml element." << std::endl;
+		::FreeXML(xml);
+		return;
+	}
+	
+	//Loops through all the elements with the name "Element"
+	for (XMLElement* xml_Element = xml_ElmentArray->first_node("Element"); xml_Element; xml_Element = xml_Element->next_sibling())
+	{
+		if (!xml_Element)
 		{
-			printf("No xml data.\n");
+			printf("Element is not valid.\n");
+			continue;
 		}
 
-		delete(xml);
+		std::cout << xml_Element->value() << std::endl;
 	}
-	else
-	{
-		//XML object not created
-	}
+
+	::FreeXML(xml);
 }
 
 void WriteXML()
