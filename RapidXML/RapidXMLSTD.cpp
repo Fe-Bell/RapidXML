@@ -1,12 +1,12 @@
-#include "RapidXMLC.hpp"
+#include "RapidXMLSTD.hpp"
 
 /**Creates a new XML file
 * @param version - the version of the XML format
 * @param encoding - The Encoding of the XML file (eg: utf-8, utf-16)
 * @returns A xml document*/
-rapidxml::xml_document<>* CreateXML(const uint8_t& version, const std::string& encoding)
+XMLDocument* CreateXML(const uint8_t& version, const std::string& encoding)
 {
-	rapidxml::xml_document<>* doc = new rapidxml::xml_document<>();
+	XMLDocument* doc = new XMLDocument();
 	SetHeader(doc, version, encoding);
 
 	return doc;
@@ -16,12 +16,12 @@ rapidxml::xml_document<>* CreateXML(const uint8_t& version, const std::string& e
 * @param version - the version of the XML format
 * @param encoding = The Encoding of the XML file (eg: utf-8, utf-16)
 * @returns True if success*/
-const bool SetHeader(rapidxml::xml_document<>* doc, const uint8_t& version, const std::string& encoding)
+const bool SetHeader(XMLDocument* doc, const uint8_t& version, const std::string& encoding)
 {
 	if (!doc)
 		return false;
 
-	rapidxml::xml_node<>* decl = doc->allocate_node(rapidxml::node_type::node_declaration);
+	XMLElement* decl = doc->allocate_node(rapidxml::node_type::node_declaration);
 
 	char buf[10];
 	sprintf_s(buf, 10, "%d.0", version);
@@ -39,7 +39,7 @@ const bool SetHeader(rapidxml::xml_document<>* doc, const uint8_t& version, cons
 * @param doc - A xml document object
 * @param node - The element to set the namespace
 * @returns True if success*/
-const bool SetNodeDefaultNamespaces(rapidxml::xml_document<>* doc, rapidxml::xml_node<>* node)
+const bool SetNodeDefaultNamespaces(XMLDocument* doc, XMLElement* node)
 {
 	return SetNodeNamespaces(doc, node, "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/2001/XMLSchema");
 }
@@ -49,7 +49,7 @@ const bool SetNodeDefaultNamespaces(rapidxml::xml_document<>* doc, rapidxml::xml
 * @param xsi - The xsi address
 * @param xsd - The xds address
 * @returns True if success*/
-const bool SetNodeNamespaces(rapidxml::xml_document<>* doc, rapidxml::xml_node<>* node, const std::string& xsi, const std::string& xsd)
+const bool SetNodeNamespaces(XMLDocument* doc, XMLElement* node, const std::string& xsi, const std::string& xsd)
 {
 	if (!node)
 		return false;
@@ -61,7 +61,7 @@ const bool SetNodeNamespaces(rapidxml::xml_document<>* doc, rapidxml::xml_node<>
 /**Disposes resources.
 * @param doc - A xml document object
 * @returns True if success*/
-const bool FreeXML(rapidxml::xml_document<>* doc)
+const bool FreeXML(XMLDocument* doc)
 {
 	if (!doc)
 		return false;
@@ -74,7 +74,7 @@ const bool FreeXML(rapidxml::xml_document<>* doc)
 * @param doc - A xml document object
 * @param filePath - The path to an xml file
 * @returns True if success*/
-const bool SaveXML(const rapidxml::xml_document<>& doc, const std::string& filePath)
+const bool SaveXML(const XMLDocument& doc, const std::string& filePath)
 {
 	// Save to file
 	std::ofstream file_stored(filePath);
@@ -88,7 +88,7 @@ const bool SaveXML(const rapidxml::xml_document<>& doc, const std::string& fileP
 * @param attributeName - The name of the attribute
 * @param attributeValue - The value of the attribute
 * @returns True if success*/
-rapidxml::xml_attribute<>* CreateAttribute(rapidxml::xml_document<>* doc, const std::string& attributeName, const std::string& attributeValue)
+XMLAttributte* CreateAttribute(XMLDocument* doc, const std::string& attributeName, const std::string& attributeValue)
 {
 	if (!doc || attributeName.empty())
 		return nullptr;
@@ -102,7 +102,7 @@ rapidxml::xml_attribute<>* CreateAttribute(rapidxml::xml_document<>* doc, const 
 * @param nodeName - The name of the node
 * @param nodeValue - The value of the node
 * @returns True if success*/
-rapidxml::xml_node<>* CreateNode(rapidxml::xml_document<>* doc, const std::string& nodeName, const std::string& nodeValue)
+XMLElement* CreateNode(XMLDocument* doc, const std::string& nodeName, const std::string& nodeValue)
 {
 	if (!doc || nodeName.empty())
 		return nullptr;
@@ -124,13 +124,13 @@ rapidxml::xml_node<>* CreateNode(rapidxml::xml_document<>* doc, const std::strin
 * @param subNodes - An array of nodes
 * @param subNodesCount - The number of nodes to add
 * @returns True if success*/
-rapidxml::xml_node<>* CreateNodeA(rapidxml::xml_document<>* doc, const std::string& nodeName, rapidxml::xml_node<>** subNodes, const size_t& subNodesCount)
+XMLElement* CreateNodeA(XMLDocument* doc, const std::string& nodeName, XMLElement** subNodes, const size_t& subNodesCount)
 {
 	if (!doc || nodeName.empty() || !subNodes || subNodesCount <= 0)
 		return nullptr;
 
 	const char* name = doc->allocate_string(nodeName.c_str());
-	rapidxml::xml_node<>* n = doc->allocate_node(rapidxml::node_type::node_element, name);
+	XMLElement* n = doc->allocate_node(rapidxml::node_type::node_element, name);
 	for (size_t i = 0; i < subNodesCount; i++)
 	{
 		auto sn = subNodes[i];
@@ -146,7 +146,7 @@ rapidxml::xml_node<>* CreateNodeA(rapidxml::xml_document<>* doc, const std::stri
 * @param doc - A xml document object
 * @param node - The element add
 * @returns True if success*/
-const bool AddNodeToDocument(rapidxml::xml_document<>* doc, rapidxml::xml_node<>* node)
+const bool AddNodeToDocument(XMLDocument* doc, XMLElement* node)
 {
 	if (!doc || !node)
 	{
@@ -160,7 +160,7 @@ const bool AddNodeToDocument(rapidxml::xml_document<>* doc, rapidxml::xml_node<>
 * @param parent - The parent element
 * @param child - The child element
 * @returns True if success*/
-const bool AddNodeToNode(rapidxml::xml_node<>* parent, rapidxml::xml_node<>* child)
+const bool AddNodeToNode(XMLElement* parent, XMLElement* child)
 {
 	if (!parent || !child)
 	{
@@ -174,7 +174,7 @@ const bool AddNodeToNode(rapidxml::xml_node<>* parent, rapidxml::xml_node<>* chi
 * @param parent - The parent element
 * @param child - The child element
 * @returns True if success*/
-const bool AddAttributeToNode(rapidxml::xml_node<>* parent, rapidxml::xml_attribute<>* child)
+const bool AddAttributeToNode(XMLElement* parent, XMLAttributte* child)
 {
 	if (!parent || !child)
 	{

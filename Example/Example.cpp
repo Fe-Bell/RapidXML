@@ -2,7 +2,7 @@
 #include "../RapidXML/rapidxml.hpp"
 #include "../RapidXML/rapidxml_utils.hpp"
 #include "../RapidXML/rapidxml_ext.hpp"
-#include "../RapidXML/RapidXMLC.hpp"
+#include "../RapidXML/RapidXMLSTD.hpp"
 
 void ReadXML();
 void WriteXML();
