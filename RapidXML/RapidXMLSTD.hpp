@@ -6,9 +6,11 @@
 #include "rapidxml_ext.hpp"
 #include <string>
 
-#define XML_XSI_TYPE						"xsi:type"
-#define XML_XMLNS_XSI						"xmlns:xsi"
-#define XML_XMLNS_XSD						"xmlns:xsd"
+#define XML_XSI_TYPE	"xsi:type"
+#define XML_XMLNS_XSI	"xmlns:xsi"
+#define XML_XMLNS_XSD	"xmlns:xsd"
+
+/**Defines basic RapidXML types with friendly names**/
 
 typedef rapidxml::xml_document<> XMLDocument;
 typedef rapidxml::xml_node<> XMLElement;
@@ -17,10 +19,18 @@ typedef rapidxml::file<> XMLFile;
 
 extern "C"
 {
+	/**Opens a new XML file
+	* @param filePath - The path to a file
+	* @returns A xml file object*/
+	__declspec(dllexport) XMLFile* OpenXMLFile(const std::string& filePath);
+	/**Disposes resources.
+	* @param doc - A xml object file
+	* @returns True if success*/
+	__declspec(dllexport) const bool FreeXMLFile(XMLFile* file);
 	/**Creates a new XML file
-	* @param filePath - Reads a xml file
+	* @param file - The xml object file
 	* @returns A xml document*/
-	__declspec(dllexport) XMLDocument* CreateXMLFromFile(const std::string& filePath);
+	__declspec(dllexport) XMLDocument* CreateXMLFromFile(XMLFile* file);
 	/**Creates a new XML file
 	* @param version - the version of the XML format
 	* @param encoding - The Encoding of the XML file (eg: utf-8, utf-16)
@@ -29,7 +39,7 @@ extern "C"
 	/**Disposes resources.
 	* @param doc - A xml document object
 	* @returns True if success*/
-	__declspec(dllexport) const bool FreeXML(XMLDocument* doc);
+	__declspec(dllexport) const bool FreeXMLObject(XMLDocument* doc);
 	/**Saves and XML object to a file
 	* @param doc - A xml document object
 	* @param filePath - The path to an xml file

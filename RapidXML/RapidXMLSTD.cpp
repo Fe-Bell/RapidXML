@@ -1,17 +1,38 @@
 #include "RapidXMLSTD.hpp"
 
-/**Creates a new XML file
-* @param filePath - Reads a xml file
-* @returns A xml document*/
-XMLDocument* CreateXMLFromFile(const std::string& filePath)
+/**Opens a new XML file
+* @param filePath - The path to a file
+* @returns A xml file object*/
+XMLFile* OpenXMLFile(const std::string& filePath)
 {
 	if (filePath.empty())
 		return nullptr;
 
-	XMLFile xmlFile(filePath.c_str());
+	return new XMLFile(filePath.c_str());
+}
+/**Disposes resources.
+* @param doc - A xml object file
+* @returns True if success*/
+const bool FreeXMLFile(XMLFile* file)
+{
+	if (!file)
+	{
+		return false;
+	}
 
-	XMLDocument* doc = new XMLDocument();;
-	doc->parse<0>(xmlFile.data());
+	delete (file);
+	return true;
+}
+/**Creates a new XML file
+* @param filePath - Reads a xml file
+* @returns A xml document*/
+XMLDocument* CreateXMLFromFile(XMLFile* file)
+{
+	if (!file)
+		return nullptr;
+
+	XMLDocument* doc = new XMLDocument();
+	doc->parse<0>(file->data());
 
 	return doc;
 }
@@ -76,7 +97,7 @@ const bool SetNodeNamespaces(XMLDocument* doc, XMLElement* node, const std::stri
 /**Disposes resources.
 * @param doc - A xml document object
 * @returns True if success*/
-const bool FreeXML(XMLDocument* doc)
+const bool FreeXMLObject(XMLDocument* doc)
 {
 	if (!doc)
 		return false;
