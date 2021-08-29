@@ -3,7 +3,7 @@
 /**Opens a new XML file
 * @param filePath - The path to a file
 * @returns A xml file object*/
-XMLFile* OpenXMLFile(const std::string& filePath)
+XMLFile* OpenXMLFile(const std::string& filePath, std::string& error)
 {
 	if (filePath.empty())
 		return nullptr;
@@ -13,7 +13,7 @@ XMLFile* OpenXMLFile(const std::string& filePath)
 /**Disposes resources.
 * @param doc - A xml object file
 * @returns True if success*/
-const bool FreeXMLFile(XMLFile* file)
+const bool DisposeXMLFile(XMLFile* file)
 {
 	if (!file)
 	{
@@ -24,12 +24,15 @@ const bool FreeXMLFile(XMLFile* file)
 	return true;
 }
 /**Creates a new XML file
-* @param filePath - Reads a xml file
+* @param file - The xml object file
 * @returns A xml document*/
-XMLDocument* CreateXMLFromFile(XMLFile* file)
+XMLDocument* CreateXMLFromFile(XMLFile* file, std::string& error)
 {
 	if (!file)
+	{
+		error = "XMLFile cannot be null";
 		return nullptr;
+	}
 
 	XMLDocument* doc = new XMLDocument();
 	doc->parse<0>(file->data());
@@ -40,10 +43,14 @@ XMLDocument* CreateXMLFromFile(XMLFile* file)
 * @param version - the version of the XML format
 * @param encoding - The Encoding of the XML file (eg: utf-8, utf-16)
 * @returns A xml document*/
-XMLDocument* CreateXML(const uint8_t& version, const std::string& encoding)
+XMLDocument* CreateXML(const uint8_t& version, const std::string& encoding, std::string& error)
 {
 	XMLDocument* doc = new XMLDocument();
-	SetHeader(doc, version, encoding);
+	if (!::SetHeader(doc, version, encoding, error))
+	{
+		::DisposeXMLObject(doc);
+		return nullptr;
+	}
 
 	return doc;
 }
@@ -52,10 +59,13 @@ XMLDocument* CreateXML(const uint8_t& version, const std::string& encoding)
 * @param version - the version of the XML format
 * @param encoding = The Encoding of the XML file (eg: utf-8, utf-16)
 * @returns True if success*/
-const bool SetHeader(XMLDocument* doc, const uint8_t& version, const std::string& encoding)
+const bool SetHeader(XMLDocument* doc, const uint8_t& version, const std::string& encoding, std::string& error)
 {
 	if (!doc)
+	{
+		error = "XDocument cannot be null";
 		return false;
+	}
 
 	XMLElement* decl = doc->allocate_node(rapidxml::node_type::node_declaration);
 
@@ -73,31 +83,40 @@ const bool SetHeader(XMLDocument* doc, const uint8_t& version, const std::string
 }
 /**Sets the default xsi and xsd namespaces
 * @param doc - A xml document object
-* @param node - The element to set the namespace
+* @param element - The element to set the namespace
 * @returns True if success*/
-const bool SetNodeDefaultNamespaces(XMLDocument* doc, XMLElement* node)
+const bool SetElementDefaultNamespaces(XMLDocument* doc, XMLElement* node, std::string& error)
 {
-	return SetNodeNamespaces(doc, node, "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/2001/XMLSchema");
+	return SetElementNamespaces(doc, node, "http://www.w3.org/2001/XMLSchema-instance", "http://www.w3.org/2001/XMLSchema", error);
 }
 /**Sets the xmlns:xsi and xmlns:xsd namespaces
 * @param doc - A xml document object
-* @param node - The element to set the namespace
+* @param element - The element to set the namespace
 * @param xsi - The xsi address
 * @param xsd - The xds address
 * @returns True if success*/
-const bool SetNodeNamespaces(XMLDocument* doc, XMLElement* node, const std::string& xsi, const std::string& xsd)
+const bool SetElementNamespaces(XMLDocument* doc, XMLElement* element, const std::string& xsi, const std::string& xsd, std::string& error)
 {
-	if (!node)
+	if (!doc)
+	{
+		error = "XMLDocument cannot be null";
 		return false;
+	}
 
-	node->append_attribute(CreateAttribute(doc, XML_XMLNS_XSI, xsi));
-	node->append_attribute(CreateAttribute(doc, XML_XMLNS_XSD, xsd));
+	if (!element)
+	{
+		error = "Element cannot be null";
+		return false;
+	}		
+
+	element->append_attribute(CreateAttribute(doc, XML_XMLNS_XSI, xsi, error));
+	element->append_attribute(CreateAttribute(doc, XML_XMLNS_XSD, xsd, error));
 	return true;
 }
 /**Disposes resources.
 * @param doc - A xml document object
 * @returns True if success*/
-const bool FreeXMLObject(XMLDocument* doc)
+const bool DisposeXMLObject(XMLDocument* doc)
 {
 	if (!doc)
 		return false;
@@ -124,29 +143,47 @@ const bool SaveXML(const XMLDocument& doc, const std::string& filePath)
 * @param attributeName - The name of the attribute
 * @param attributeValue - The value of the attribute
 * @returns True if success*/
-XMLAttributte* CreateAttribute(XMLDocument* doc, const std::string& attributeName, const std::string& attributeValue)
+XMLAttributte* CreateAttribute(XMLDocument* doc, const std::string& attributeName, const std::string& attributeValue, std::string& error)
 {
-	if (!doc || attributeName.empty())
+	if (!doc)
+	{
+		error = "XDocument cannot be null";
 		return nullptr;
+	}
+
+	if (attributeName.empty())
+	{
+		error = "Attribute name cannot be null";
+		return nullptr;
+	}
 
 	const char* name = doc->allocate_string(attributeName.c_str());
 	const char* value = doc->allocate_string(attributeValue.c_str());
 	return doc->allocate_attribute(name, value);
 }
-/**Creates a node
+/**Creates a element
 * @param doc - A xml document object
-* @param nodeName - The name of the node
-* @param nodeValue - The value of the node
+* @param elementName - The name of the element
+* @param elementValue - The value of the element
 * @returns True if success*/
-XMLElement* CreateNode(XMLDocument* doc, const std::string& nodeName, const std::string& nodeValue)
+XMLElement* CreateElement(XMLDocument* doc, const std::string& elementName, const std::string& elementValue, std::string& error)
 {
-	if (!doc || nodeName.empty())
-		return nullptr;
-
-	const char* name = doc->allocate_string(nodeName.c_str());
-	if (!nodeValue.empty())
+	if (!doc)
 	{
-		const char* value = doc->allocate_string(nodeValue.c_str());
+		error = "XDocument cannot be null";
+		return nullptr;
+	}
+
+	if (elementName.empty())
+	{
+		error = "Element name cannot be null";
+		return nullptr;
+	}
+
+	const char* name = doc->allocate_string(elementName.c_str());
+	if (!elementValue.empty())
+	{
+		const char* value = doc->allocate_string(elementValue.c_str());
 		return doc->allocate_node(rapidxml::node_type::node_element, name, value);
 	}
 	else
@@ -154,22 +191,43 @@ XMLElement* CreateNode(XMLDocument* doc, const std::string& nodeName, const std:
 		return doc->allocate_node(rapidxml::node_type::node_element, name);
 	}
 }
-/**Creates a node
+/**Creates a element
 * @param doc - A xml document object
-* @param nodeName - The name of the node
-* @param subNodes - An array of nodes
-* @param subNodesCount - The number of nodes to add
+* @param elementName - The name of the element
+* @param subElements - An array of elements
+* @param subElementCount - The number of elements to add
 * @returns True if success*/
-XMLElement* CreateNodeA(XMLDocument* doc, const std::string& nodeName, XMLElement** subNodes, const size_t& subNodesCount)
+XMLElement* CreateElementA(XMLDocument* doc, const std::string& elementName, XMLElement** innerElements, const size_t& innerElementsCount, std::string& error)
 {
-	if (!doc || nodeName.empty() || !subNodes || subNodesCount <= 0)
-		return nullptr;
-
-	const char* name = doc->allocate_string(nodeName.c_str());
-	XMLElement* n = doc->allocate_node(rapidxml::node_type::node_element, name);
-	for (size_t i = 0; i < subNodesCount; i++)
+	if (!doc)
 	{
-		auto sn = subNodes[i];
+		error = "XDocument cannot be null";
+		return nullptr;
+	}
+
+	if (elementName.empty())
+	{
+		error = "Element name cannot be null";
+		return nullptr;
+	}
+
+	if (!innerElements)
+	{
+		error = "Inner elements array cannot be null";
+		return nullptr;
+	}
+
+	if (innerElementsCount <= 0)
+	{
+		error = "Inner elements count must be larger than zero";
+		return nullptr;
+	}		
+
+	const char* name = doc->allocate_string(elementName.c_str());
+	XMLElement* n = doc->allocate_node(rapidxml::node_type::node_element, name);
+	for (size_t i = 0; i < innerElementsCount; i++)
+	{
+		auto sn = innerElements[i];
 		if (sn)
 		{
 			n->append_node(sn);
@@ -178,46 +236,185 @@ XMLElement* CreateNodeA(XMLDocument* doc, const std::string& nodeName, XMLElemen
 	
 	return n;
 }
-/**Creates a node
-* @param doc - A xml document object
-* @param nodeName - The name of the node
-* @returns True if success*/
-XMLElement* FindNodeInRoot(XMLDocument* doc, const std::string& nodeName)
+/**Searches for a named element
+* @param parent - A xml element object
+* @param elementName - The name of the element
+* @returns The element, if success*/
+XMLElement* FirstOrDefaultElement(XMLElement* parent, const std::string& elementName, std::string& error)
 {
-	if (!doc || nodeName.empty())
-		return nullptr;
-
-	for (XMLElement* x = doc->first_node(); x; x = x->next_sibling())
+	if (!parent)
 	{
-		if (x && std::string(x->name()) == nodeName)
+		error = "Parent cannot be null";
+		return nullptr;
+	}
+
+	if (elementName.empty())
+	{
+		error = "Element name cannot be null";
+		return nullptr;
+	}
+		
+	for (XMLElement* x = parent->first_node(); x != nullptr; x = x->next_sibling())
+	{
+		if (x && std::string(x->name()) == elementName)
 		{
 			return x;
 		}
 	}
+
 	return nullptr;
+}
+/**Searches for a named element
+* @param parent - A xml document object
+* @param elementName - The name of the element
+* @returns The element, if success*/
+XMLElement* FirstOrDefaultElementA(XMLDocument* parent, const std::string& elementName, std::string& error)
+{
+	if (!parent)
+	{
+		error = "Parent cannot be null";
+		return nullptr;
+	}
+
+	if (elementName.empty())
+	{
+		error = "Element name cannot be null";
+		return nullptr;
+	}
+
+	return parent->first_node(elementName.c_str());
+}
+
+XMLAttributte* FirstOrDefaultAttribute(XMLElement* parent, const std::string& attributeName, std::string& error)
+{
+	if (!parent)
+	{
+		error = "Parent cannot be null";
+		return nullptr;
+	}
+
+	if (attributeName.empty())
+	{
+		error = "Element name cannot be null";
+		return nullptr;
+	}
+		
+	return parent->first_attribute(attributeName.c_str());
+}
+
+const bool SetAttributeValue(XMLAttributte* attribute, const std::string& attributeValue, std::string& error)
+{
+	if (!attribute)
+	{
+		error = "Attribute cannot be null";
+		return false;
+	}
+
+	XMLDocument* doc = attribute->document();
+	if (!doc)
+	{
+		error = "Parent document cannot be null";
+		return false;
+	}
+
+	const char* value = doc->allocate_string(attributeValue.c_str());
+	attribute->value(value);
+	return true;
+}
+const bool SetAttributeValueA(XMLElement* element, const std::string& attributeName, const std::string& attributeValue, std::string& error)
+{
+	if (!element)
+	{
+		error = "Element cannot be null";
+		return false;
+	}
+
+	if (attributeName.empty())
+	{
+		error = "Attribute name cannot be null";
+		return false;
+	}
+
+	XMLAttributte* attribute = ::FirstOrDefaultAttribute(element, attributeName, error);
+	if (!attribute)
+	{
+		return false;
+	}
+
+	return ::SetAttributeValue(attribute, attributeValue, error);
+}
+const bool SetElementValue(XMLElement* parent, XMLElement* child, std::string& error)
+{
+	if (!parent)
+	{
+		error = "Parent cannot be null";
+		return false;
+	}
+
+	if (!child)
+	{
+		error = "Child cannot be null";
+		return false;
+	}
+
+	parent->append_node(child);
+	return true;
+}
+const bool SetElementValueA(XMLElement* element, const std::string& elementValue, std::string& error)
+{
+	if (!element)
+	{
+		error = "Element cannot be null";
+		return false;
+	}
+
+	XMLDocument* doc = element->document();
+	if (!doc)
+	{
+		error = "Parent document cannot be null";
+		return false;
+	}
+
+	const char* value = doc->allocate_string(elementValue.c_str());
+	element->value(value);
+	return true;
 }
 /**Adds a node to a xml document
 * @param doc - A xml document object
 * @param node - The element add
 * @returns True if success*/
-const bool AddNodeToDocument(XMLDocument* doc, XMLElement* node)
+const bool AddElementToDocument(XMLDocument* doc, XMLElement* element, std::string& error)
 {
-	if (!doc || !node)
+	if (!doc)
 	{
+		error = "XMLDocument cannot be null";
 		return false;
 	}
 
-	doc->append_node(node);
+	if (!element)
+	{
+		error = "XMLElement cannot be null";
+		return false;
+	}
+
+	doc->append_node(element);
 	return true;
 }
 /**Adds a node to another node
 * @param parent - The parent element
 * @param child - The child element
 * @returns True if success*/
-const bool AddNodeToNode(XMLElement* parent, XMLElement* child)
+const bool AddElementToElement(XMLElement* parent, XMLElement* child, std::string& error)
 {
-	if (!parent || !child)
+	if (!parent)
 	{
+		error = "PArent cannot be null";
+		return false;
+	}
+
+	if (!child)
+	{
+		error = "Child cannot be null";
 		return false;
 	}
 
@@ -228,10 +425,17 @@ const bool AddNodeToNode(XMLElement* parent, XMLElement* child)
 * @param parent - The parent element
 * @param child - The child element
 * @returns True if success*/
-const bool AddAttributeToNode(XMLElement* parent, XMLAttributte* child)
+const bool AddAttributeToElement(XMLElement* parent, XMLAttributte* child, std::string& error)
 {
-	if (!parent || !child)
+	if (!parent)
 	{
+		error = "PArent cannot be null";
+		return false;
+	}
+
+	if (!child)
+	{
+		error = "Child cannot be null";
 		return false;
 	}
 

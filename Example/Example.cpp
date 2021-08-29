@@ -19,29 +19,31 @@ int main()
 
 void ReadXML()
 {
+	std::string error;
+
 	//load file
-	XMLFile* file = ::OpenXMLFile("ReadExample.xml");
+	XMLFile* file = ::OpenXMLFile("ReadExample.xml", error);
 	if (!file)
 	{
-		std::cout << "Could not open file" << std::endl;
+		std::cout << error << std::endl;
 		return;
 	}
 
-	XMLDocument* xml = ::CreateXMLFromFile(file);
+	XMLDocument* xml = ::CreateXMLFromFile(file, error);
 	if (!xml)
 	{
-		std::cout << "XML object not created" << std::endl;
-		::FreeXMLFile(file);
+		std::cout << error << std::endl;
+		::DisposeXMLFile(file);
 		return;
 	}
 
 	//find root
-	XMLElement* root = ::FindNodeInRoot(xml, "RootElement");
+	XMLElement* root = ::FirstOrDefaultElement(xml, "RootElement", error);
 	if (!root)
 	{
-		std::cout << "Could not find root." << std::endl;
-		::FreeXMLObject(xml);
-		::FreeXMLFile(file);
+		std::cout << error << std::endl;
+		::DisposeXMLObject(xml);
+		::DisposeXMLFile(file);
 		return;
 	}
 
@@ -50,8 +52,8 @@ void ReadXML()
 	if (!xml_RootAttrib)
 	{
 		std::cout << "Could not find attribute in root." << std::endl;
-		::FreeXMLObject(xml);
-		::FreeXMLFile(file);
+		::DisposeXMLObject(xml);
+		::DisposeXMLFile(file);
 		return;
 	}
 
@@ -63,8 +65,8 @@ void ReadXML()
 	if (!xml_ElmentArray)
 	{
 		std::cout << "Could not find ElmentArray xml element." << std::endl;
-		::FreeXMLObject(xml);
-		::FreeXMLFile(file);
+		::DisposeXMLObject(xml);
+		::DisposeXMLFile(file);
 		return;
 	}
 	
@@ -80,40 +82,74 @@ void ReadXML()
 		std::cout << xml_Element->value() << std::endl;
 	}
 
-	::FreeXMLObject(xml);
-	::FreeXMLFile(file);
+	::DisposeXMLObject(xml);
+	::DisposeXMLFile(file);
 }
 
 void WriteXML()
 {
-	auto doc = ::CreateXML(1, "utf-8");
-
-	auto root = ::CreateNode(doc, "ROOT", "");
-	if (!::AddNodeToDocument(doc, root))
+	std::string error;
+	auto doc = ::CreateXML(1, "utf-8", error);
+	if (!doc)
 	{
-		std::cout << "Could not add root" << std::endl;
-		::FreeXMLObject(doc);
+		std::cout << error << std::endl;
 		return;
 	}
 
-	if (!SetNodeDefaultNamespaces(doc, root))
+	auto root = ::CreateElement(doc, "ROOT", "", error);
+	if (!root)
 	{
-		std::cout << "Could not set namespaces" << std::endl;
-		::FreeXMLObject(doc);
+		std::cout << error << std::endl;
+		::DisposeXMLObject(doc);
+		return;
+	}
+
+	if (!::AddElementToDocument(doc, root, error))
+	{
+		std::cout << error << std::endl;
+		::DisposeXMLObject(doc);
+		return;
+	}
+
+	if (!SetElementDefaultNamespaces(doc, root, error))
+	{
+		std::cout << error << std::endl;
+		::DisposeXMLObject(doc);
 		return;
 	}
 
 	for (size_t i = 0; i < 5; i++)
 	{
-		auto x = ::CreateNode(doc, "Node", "");
-		auto a = ::CreateAttribute(doc, "ID", std::to_string(i));		
-		::AddAttributeToNode(x, a);
-		::AddNodeToNode(root, x);
+		auto x = ::CreateElement(doc, "Node", "", error);
+		if (!x)
+		{
+			std::cout << error << std::endl;
+			continue;
+		}
+
+		auto a = ::CreateAttribute(doc, "ID", std::to_string(i), error);
+		if (!a)
+		{
+			std::cout << error << std::endl;
+			continue;
+		}
+
+		if (!::AddAttributeToElement(x, a, error))
+		{
+			std::cout << error << std::endl;
+			continue;
+		}
+
+		if (!::AddElementToElement(root, x, error))
+		{
+			std::cout << error << std::endl;
+			continue;
+		}
 	}	
 
 	if (!::SaveXML(*doc, "test.xml"))
 	{
 		std::cout << "Could not create file" << std::endl;
 	}
-	::FreeXMLObject(doc);
+	::DisposeXMLObject(doc);
 }
