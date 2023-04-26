@@ -74,12 +74,12 @@ namespace rapidxml
             return tmp;
         }
 
-        bool operator ==(const node_iterator<Ch> &rhs)
+        bool operator ==(const node_iterator<Ch> &rhs) const
         {
             return m_node == rhs.m_node;
         }
 
-        bool operator !=(const node_iterator<Ch> &rhs)
+        bool operator !=(const node_iterator<Ch> &rhs) const
         {
             return m_node != rhs.m_node;
         }
