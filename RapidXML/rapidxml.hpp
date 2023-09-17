@@ -1509,7 +1509,7 @@ namespace rapidxml
             {
                 // Insert 8-bit ASCII character
                 // Todo: possibly verify that code is less than 256 and use replacement char otherwise?
-                text[0] = static_cast<unsigned char>(code);
+                text[0] = static_cast<char>(code);
                 text += 1;
             }
             else
@@ -1517,28 +1517,28 @@ namespace rapidxml
                 // Insert UTF8 sequence
                 if (code < 0x80)    // 1 byte sequence
                 {
-	                text[0] = static_cast<unsigned char>(code);
+	                text[0] = static_cast<char>(code);
                     text += 1;
                 }
                 else if (code < 0x800)  // 2 byte sequence
                 {
-	                text[1] = static_cast<unsigned char>((code | 0x80) & 0xBF); code >>= 6;
-	                text[0] = static_cast<unsigned char>(code | 0xC0);
+	                text[1] = static_cast<char>((code | 0x80) & 0xBF); code >>= 6;
+	                text[0] = static_cast<char>(code | 0xC0);
                     text += 2;
                 }
 	            else if (code < 0x10000)    // 3 byte sequence
                 {
-	                text[2] = static_cast<unsigned char>((code | 0x80) & 0xBF); code >>= 6;
-	                text[1] = static_cast<unsigned char>((code | 0x80) & 0xBF); code >>= 6;
-	                text[0] = static_cast<unsigned char>(code | 0xE0);
+	                text[2] = static_cast<char>((code | 0x80) & 0xBF); code >>= 6;
+	                text[1] = static_cast<char>((code | 0x80) & 0xBF); code >>= 6;
+	                text[0] = static_cast<char>(code | 0xE0);
                     text += 3;
                 }
 	            else if (code < 0x110000)   // 4 byte sequence
                 {
-	                text[3] = static_cast<unsigned char>((code | 0x80) & 0xBF); code >>= 6;
-	                text[2] = static_cast<unsigned char>((code | 0x80) & 0xBF); code >>= 6;
-	                text[1] = static_cast<unsigned char>((code | 0x80) & 0xBF); code >>= 6;
-	                text[0] = static_cast<unsigned char>(code | 0xF0);
+	                text[3] = static_cast<char>((code | 0x80) & 0xBF); code >>= 6;
+	                text[2] = static_cast<char>((code | 0x80) & 0xBF); code >>= 6;
+	                text[1] = static_cast<char>((code | 0x80) & 0xBF); code >>= 6;
+	                text[0] = static_cast<char>(code | 0xF0);
                     text += 4;
                 }
                 else    // Invalid, only codes up to 0x10FFFF are allowed in Unicode
