@@ -312,7 +312,7 @@ namespace rapidxml
             const Ch *tmp = p;
             while (*tmp) 
                 ++tmp;
-            return tmp - p;
+            return static_cast<std::size_t>(tmp - p);
         }
 
         // Compare strings for equality
@@ -1794,7 +1794,7 @@ namespace rapidxml
 
             // Create comment node
             xml_node<Ch> *comment = this->allocate_node(node_type::node_comment);
-            comment->value(value, text - value);
+            comment->value(value, static_cast<std::size_t>(text - value));
             
             // Place zero terminator after comment value
             if (!(Flags & parse_no_string_terminators))
@@ -1853,7 +1853,7 @@ namespace rapidxml
             {
                 // Create a new doctype node
                 xml_node<Ch> *doctype = this->allocate_node(node_type::node_doctype);
-                doctype->value(value, text - value);
+                doctype->value(value, static_cast<std::size_t>(text - value));
                 
                 // Place zero terminator after value
                 if (!(Flags & parse_no_string_terminators))
@@ -1885,7 +1885,7 @@ namespace rapidxml
                 skip<node_name_pred, Flags>(text);
                 if (text == name)
                     RAPIDXML_PARSE_ERROR("expected PI target", text);
-                pi->name(name, text - name);
+                pi->name(name, static_cast<std::size_t>(text - name));
                 
                 // Skip whitespace between pi target and pi
                 skip<whitespace_pred, Flags>(text);
@@ -1902,7 +1902,7 @@ namespace rapidxml
                 }
 
                 // Set pi value (verbatim, no entity expansion or whitespace normalization)
-                pi->value(value, text - value);     
+                pi->value(value, static_cast<std::size_t>(text - value));
                 
                 // Place zero terminator after name and value
                 if (!(Flags & parse_no_string_terminators))
@@ -1967,14 +1967,14 @@ namespace rapidxml
             if (!(Flags & parse_no_data_nodes))
             {
                 xml_node<Ch> *data = this->allocate_node(node_type::node_data);
-                data->value(value, end - value);
+                data->value(value, static_cast<std::size_t>(end - value));
                 node->append_node(data);
             }
 
             // Add data to parent node if no data exists yet
             if (!(Flags & parse_no_element_values)) 
                 if (*node->value() == Ch('\0'))
-                    node->value(value, end - value);
+                    node->value(value, static_cast<std::size_t>(end - value));
 
             // Place zero terminator after value
             if (!(Flags & parse_no_string_terminators))
@@ -2017,7 +2017,7 @@ namespace rapidxml
 
             // Create new cdata node
             xml_node<Ch> *cdata = this->allocate_node(node_type::node_cdata);
-            cdata->value(value, text - value);
+            cdata->value(value, static_cast<std::size_t>(text - value));
 
             // Place zero terminator after value
             if (!(Flags & parse_no_string_terminators))
@@ -2039,7 +2039,7 @@ namespace rapidxml
             skip<node_name_pred, Flags>(text);
             if (text == name)
                 RAPIDXML_PARSE_ERROR("expected element name", text);
-            element->name(name, text - name);
+            element->name(name, static_cast<std::size_t>(text - name));
             
             // Skip whitespace between element name and attributes or >
             skip<whitespace_pred, Flags>(text);
@@ -2190,7 +2190,7 @@ namespace rapidxml
                             // Skip and validate closing tag name
                             Ch *closing_name = text;
                             skip<node_name_pred, Flags>(text);
-                            if (!internal::compare(node->name(), node->name_size(), closing_name, text - closing_name, true))
+                            if (!internal::compare(node->name(), node->name_size(), closing_name, static_cast<std::size_t>(text - closing_name), true))
                                 RAPIDXML_PARSE_ERROR("invalid closing tag name", text);
                         }
                         else
@@ -2243,7 +2243,7 @@ namespace rapidxml
 
                 // Create new attribute
                 xml_attribute<Ch> *attribute = this->allocate_attribute();
-                attribute->name(name, text - name);
+                attribute->name(name, static_cast<std::size_t>(text - name));
                 node->append_attribute(attribute);
 
                 // Skip whitespace after attribute name
@@ -2276,7 +2276,7 @@ namespace rapidxml
                     end = skip_and_expand_character_refs<attribute_value_pred<Ch('"')>, attribute_value_pure_pred<Ch('"')>, AttFlags>(text);
                 
                 // Set attribute value
-                attribute->value(value, end - value);
+                attribute->value(value, static_cast<std::size_t>(end - value));
                 
                 // Make sure that end quote is present
                 if (*text != quote)
