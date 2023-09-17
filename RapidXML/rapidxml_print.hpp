@@ -101,7 +101,34 @@ namespace rapidxml
 
         ///////////////////////////////////////////////////////////////////////////
         // Internal printing operations
-    
+
+        template<class OutIt, class Ch>
+        inline OutIt print_children(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_attributes(OutIt out, const xml_node<Ch> *node, int flags);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_data_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_cdata_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_element_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_declaration_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_comment_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_doctype_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
+        template<class OutIt, class Ch>
+        inline OutIt print_pi_node(OutIt out, const xml_node<Ch> *node, int flags, int indent);
+
         // Print node
         template<class OutIt, class Ch>
         inline OutIt print_node(OutIt out, const xml_node<Ch> *node, int flags, int indent)
@@ -119,12 +146,12 @@ namespace rapidxml
             case node_type::node_element:
                 out = print_element_node(out, node, flags, indent);
                 break;
-            
+
             // Data
             case node_type::node_data:
                 out = print_data_node(out, node, flags, indent);
                 break;
-            
+
             // CDATA
             case node_type::node_cdata:
                 out = print_cdata_node(out, node, flags, indent);
@@ -139,7 +166,7 @@ namespace rapidxml
             case node_type::node_comment:
                 out = print_comment_node(out, node, flags, indent);
                 break;
-            
+
             // Doctype
             case node_type::node_doctype:
                 out = print_doctype_node(out, node, flags, indent);
@@ -155,7 +182,7 @@ namespace rapidxml
                 assert(0);
                 break;
             }
-            
+
             // If indenting not disabled, add line break after node
             if (!(flags & print_no_indenting))
                 *out = Ch('\n'), ++out;
