@@ -1,4 +1,5 @@
 #include "RapidXMLSTD.hpp"
+#include "rapidxml_print.hpp"
 
 /**Opens a new XML file
 * @param filePath - The path to a file
