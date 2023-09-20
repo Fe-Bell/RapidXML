@@ -3,7 +3,6 @@
 
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
-#include "rapidxml_ext.hpp"
 #include <string>
 
 #define XML_XSI_TYPE	"xsi:type"
