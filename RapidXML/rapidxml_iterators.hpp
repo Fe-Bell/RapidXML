@@ -2,8 +2,9 @@
 #define RAPIDXML_ITERATORS_HPP_INCLUDED
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
-// Version 1.14
-// Revision $DateTime: 2009/05/13 01:46:17 $
+// Copyright (C) 2019 https://github.com/Fe-Bell/RapidXML
+// Version 1.16
+// Revision $DateTime: 2023/09/19 23:27:00 $
 //! \file rapidxml_iterators.hpp This file contains rapidxml iterators
 
 #include "rapidxml.hpp"
