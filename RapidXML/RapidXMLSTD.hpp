@@ -1,6 +1,10 @@
 #ifndef RAPIDXMLSTD
 #define RAPIDXMLSTD
 
+// Copyright (C) 2019 https://github.com/Fe-Bell/RapidXML
+// Version 1.16
+// Revision $DateTime: 2023/09/19 23:27:00 $
+
 #include "rapidxml.hpp"
 #include "rapidxml_utils.hpp"
 #include <string>

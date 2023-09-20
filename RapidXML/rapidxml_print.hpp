@@ -2,7 +2,9 @@
 #define RAPIDXML_PRINT_HPP_INCLUDED
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
-// Version 1.14
+// Copyright (C) 2019 https://github.com/Fe-Bell/RapidXML
+// Version 1.16
+// Revision $DateTime: 2023/09/19 23:27:00 $
 // Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml_print.hpp This file contains rapidxml printer implementation
 
