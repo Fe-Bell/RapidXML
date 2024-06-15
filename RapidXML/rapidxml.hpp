@@ -2184,6 +2184,10 @@ namespace rapidxml
                 case Ch('<'):
                     if (text[1] == Ch('/'))
                     {
+                        // Text has only whitespace characters (clown, 2009/10/14, https://sourceforge.net/p/rapidxml/patches/4/).
+                        if (contents_start != text && !(Flags & parse_trim_whitespace))
+                            parse_and_append_data<Flags>(node, contents_start, contents_start);
+
                         // Node closing
                         text += 2;      // Skip '</'
                         if (Flags & parse_validate_closing_tags)
@@ -2212,6 +2216,10 @@ namespace rapidxml
                         ++text;     // Skip '<'
                         if (xml_node<Ch> *child = parse_node<Flags>(text))
                             node->append_node(child);
+
+                        // Skip whitespace between closing-tag of child node
+                        // and the next element (clown, 2009/10/14, https://sourceforge.net/p/rapidxml/patches/4/).
+                        skip<whitespace_pred, Flags>(text);
                     }
                     break;
 
@@ -2222,6 +2230,7 @@ namespace rapidxml
                 // Data node
                 default:
                     next_char = parse_and_append_data<Flags>(node, text, contents_start);
+                    contents_start = text; // (clown, 2009/10/16, https://sourceforge.net/p/rapidxml/patches/4/)
                     goto after_data_node;   // Bypass regular processing after data nodes
 
                 }
