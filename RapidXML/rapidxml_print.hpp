@@ -3,9 +3,8 @@
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Copyright (C) 2019 https://github.com/Fe-Bell/RapidXML
-// Version 1.16
+// Version 1.17
 // Revision $DateTime: 2023/09/19 23:27:00 $
-// Revision $DateTime: 2009/05/13 01:46:17 $
 //! \file rapidxml_print.hpp This file contains rapidxml printer implementation
 
 #include "rapidxml.hpp"

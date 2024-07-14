@@ -3,8 +3,8 @@
 
 // Copyright (C) 2006, 2009 Marcin Kalicinski
 // Copyright (C) 2019 https://github.com/Fe-Bell/RapidXML
-// Version 1.16
-// Revision $DateTime: 2023/09/19 23:27:00 $
+// Version 1.17
+// Revision $DateTime: 2024/06/15 19:38:51 $
 //! \file rapidxml.hpp This file contains rapidxml parser and DOM implementation
 
 // If standard library is disabled, user must provide implementations of required functions and typedefs

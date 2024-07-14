@@ -1,6 +1,10 @@
 #include "RapidXMLSTD.hpp"
 #include "rapidxml_print.hpp"
 
+// Copyright (C) 2019 https://github.com/Fe-Bell/RapidXML
+// Version 1.17
+// Revision $DateTime: 2023/09/19 23:27:00 $
+
 /**Opens a new XML file
 * @param filePath - The path to a file
 * @returns A xml file object*/
