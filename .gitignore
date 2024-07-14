@@ -4,5 +4,6 @@
 
 /.vs
 /bin
-/RapidXML/RapidXML.vcxproj.user
-/RapidXML/RapidXML.vcxproj.filters
+/**/**.vcxproj.user
+/**/**.vcxproj.filters
+/packages
